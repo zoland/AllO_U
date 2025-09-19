@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1976D2">
+    <title>AllO_G Коммуникатор</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="manifest" href="../manifest.json">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="header-left">
+                <div class="logo" onclick="showInfo()">AllO_G</div>
+            </div>
+            <div class="header-right">
+                <div class="protocols">
+                    <div class="protocol-item" id="protocol-I" onclick="showProtocolInfo('I')">
+                        <span class="protocol-letter">I</span>
+                        <span class="protocol-status" id="status-I">🟢4G</span>
+                    </div>
+                    <div class="protocol-item" id="protocol-W" onclick="showProtocolInfo('W')">
+                        <span class="protocol-letter">W</span>
+                        <span class="protocol-status" id="status-W">⚫</span>
+                    </div>
+                    <div class="protocol-item" id="protocol-A" onclick="showProtocolInfo('A')">
+                        <span class="protocol-letter">A</span>
+                        <span class="protocol-status" id="status-A">⚫</span>
+                    </div>
+                    <div class="protocol-item" id="protocol-Z" onclick="showProtocolInfo('Z')">
+                        <span class="protocol-letter">Z</span>
+                        <span class="protocol-status" id="status-Z">⚫</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="participants-section">
+            <div class="participants-list" id="participantsList">
+            </div>
+        </main>
+
+        <footer class="actions-section" id="actionsSection">
+            <div class="action-btn" onclick="openDialer()">
+                <div class="action-icon-footer">📞</div>
+                <div class="action-label">Связь</div>
+            </div>
+            <div class="action-btn" onclick="openGroupActions()">
+                <div class="action-icon-footer">👥</div>
+                <div class="action-label">Группа</div>
+            </div>
+            <div class="action-btn" onclick="openMap()">
+                <div class="action-icon-footer">📍</div>
+                <div class="action-label">Карта</div>
+            </div>
+            <div class="action-btn" onclick="openVoiceCommands()">
+                <div class="action-icon-footer">🎤</div>
+                <div class="action-label">Голос</div>
+            </div>
+            <div class="action-btn" onclick="openHelp()">
+                <div class="action-icon-footer">❓</div>
+                <div class="action-label">Справка</div>
+            </div>
+            <div class="action-btn" onclick="openSettings()">
+                <div class="action-icon-footer">⚙️</div>
+                <div class="action-label">Настройки</div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../JS/UTILS/popup-manager.js"></script>
+    <script src="../JS/UTILS/swipe-manager.js"></script>
+    <script src="../JS/UTILS/ui-handlers.js"></script>
+    <script src="../JS/participants.js"></script>
+    <script src="../JS/app.js"></script>
+</body>
+</html>

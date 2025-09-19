@@ -1,0 +1,8 @@
+{
+    "name": "AllO_G Коммуникатор",
+    "short_name": "AllO_G", 
+    "start_url": "./HTML/index.html",
+    "display": "standalone",
+    "background_color": "#1976D2",
+    "theme_color": "#1976D2"
+}
