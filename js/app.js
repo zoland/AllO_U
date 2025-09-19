@@ -187,5 +187,7 @@ function openSettings() {
 
 let app;
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('AllO_U Started');
+    // Инициализация
     app = new AllO_G_Communicator();
 });
