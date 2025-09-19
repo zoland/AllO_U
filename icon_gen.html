@@ -1,44 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Generate Icon</title>
+    <meta charset="UTF-8">
+    <title>Generate 512x512 Icon</title>
 </head>
 <body>
-    <h1>Генератор иконки AllO_G</h1>
-    <canvas id="canvas" width="192" height="192"></canvas>
-    <br>
-    <button onclick="downloadIcon()">Скачать icon-192.png</button>
+    <h1>Создание icon-512.png</h1>
+    <canvas id="canvas" width="512" height="512" style="border: 1px solid #ccc;"></canvas>
+    <br><br>
+    <button onclick="download()" style="padding: 10px 20px; font-size: 16px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Скачать icon-512.png
+    </button>
     
     <script>
-        // Создаем иконку
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const size = 512;
         
         // Градиентный фон
-        const gradient = ctx.createLinearGradient(0, 0, 192, 192);
+        const gradient = ctx.createLinearGradient(0, 0, size, size);
         gradient.addColorStop(0, '#667eea');
         gradient.addColorStop(1, '#764ba2');
+        
+        // Скругленный прямоугольник
+        const radius = 80;
+        ctx.beginPath();
+        ctx.moveTo(radius, 0);
+        ctx.lineTo(size - radius, 0);
+        ctx.quadraticCurveTo(size, 0, size, radius);
+        ctx.lineTo(size, size - radius);
+        ctx.quadraticCurveTo(size, size, size - radius, size);
+        ctx.lineTo(radius, size);
+        ctx.quadraticCurveTo(0, size, 0, size - radius);
+        ctx.lineTo(0, radius);
+        ctx.quadraticCurveTo(0, 0, radius, 0);
+        ctx.closePath();
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, 192, 192);
+        ctx.fill();
         
         // Белый круг
         ctx.beginPath();
-        ctx.arc(96, 96, 70, 0, 2 * Math.PI);
+        ctx.arc(256, 256, 150, 0, 2 * Math.PI);
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         ctx.fill();
         
-        // Текст
-        ctx.font = 'bold 48px Arial';
+        // Текст AG
+        ctx.font = 'bold 120px -apple-system, Arial';
         ctx.fillStyle = '#667eea';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('AG', 96, 96);
+        ctx.fillText('AG', 256, 256);
         
-        // Функция скачивания
-        function downloadIcon() {
+        // Индикаторы протоколов
+        const colors = ['#4CAF50', '#FFC107', '#FF5722', '#9C27B0'];
+        colors.forEach((color, i) => {
+            ctx.beginPath();
+            ctx.arc(420, 100 + (i * 40), 15, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+        });
+        
+        function download() {
             const link = document.createElement('a');
-            link.download = 'icon-192.png';
-            link.href = canvas.toDataURL();
+            link.download = 'icon-512.png';
+            link.href = canvas.toDataURL('image/png');
             link.click();
         }
     </script>
