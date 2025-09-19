@@ -1,193 +1,224 @@
-class AllO_G_Communicator {
+// Главный класс приложения
+class AllO_App {
     constructor() {
-        this.participants = new Map();
-        this.selectedParticipant = null;
+        this.participants = [];
+        this.currentPage = 'contacts';
+        this.protocols = {
+            'I': { name: 'Internet', active: true, signal: '4G' },
+            'W': { name: 'WiFi', active: false },
+            'A': { name: 'Access Point', active: false },
+            'Z': { name: 'ZigBee', active: false }
+        };
+        
         this.init();
     }
-
+    
     init() {
-        this.loadTestData();
+        console.log('AllO_G Initializing...');
+        this.loadParticipants();
         this.renderParticipants();
         this.setupEventListeners();
-        this.updateProtocolStatuses();
-        console.log('AllO_G v1.1.5 инициализирован');
+        this.registerServiceWorker();
     }
-
-    loadTestData() {
-        if (typeof testParticipants !== 'undefined') {
-            testParticipants.forEach(participant => {
-                this.participants.set(participant.id, participant);
-            });
+    
+    loadParticipants() {
+        // Загрузка тестовых данных
+        this.participants = [
+            {
+                id: 1,
+                name: 'Анна Сидорова',
+                callsign: 'Браво',
+                type: 'human',
+                role: 'Оператор',
+                status: 'online',
+                battery: 67,
+                lastActivity: '5м назад',
+                protocols: ['I', 'W'],
+                favorite: true
+            },
+            {
+                id: 2,
+                name: 'Робот-помощник',
+                callsign: 'Альфа',
+                type: 'droid',
+                role: 'Помощник',
+                status: 'online',
+                battery: 89,
+                lastActivity: 'Сейчас',
+                protocols: ['W', 'Z']
+            },
+            {
+                id: 3,
+                name: 'Метеостанция',
+                callsign: 'База',
+                type: 'device',
+                role: 'Монитор',
+                status: 'online',
+                battery: 100,
+                lastActivity: '1м назад',
+                protocols: ['Z']
+            }
+        ];
+        
+        // Попытка загрузить из localStorage
+        const saved = localStorage.getItem('participants');
+        if (saved) {
+            try {
+                this.participants = JSON.parse(saved);
+            } catch (e) {
+                console.log('Using default participants');
+            }
         }
     }
-
-renderParticipants() {
-const container = document.getElementById("participantsList");
-if (!container) return;
-
-const participantsArray = Array.from(this.participants.values())
-.sort((a, b) => {
-if (a.isFavorite && !b.isFavorite) return -1;
-if (!a.isFavorite && b.isFavorite) return 1;
-return a.callsign.localeCompare(b.callsign);
-});
-
-const newCard = `
-<div class="participant-card new-participant" onclick="app.addNewParticipant()">
-<div class="new-participant-content">
-<div class="new-participant-icon">➕</div>
-<div class="new-participant-text">Добавить участника</div>
-<div class="swipe-hint">← Свайп для быстрого добавления</div>
-</div>
-</div>
-`;
-
-const participantCards = participantsArray.map(participant => {
-const protocols = Array.isArray(participant.protocols) ? 
-participant.protocols.join(" ") : 
-(participant.protocols || "");
-
-return `
-<div class="participant-card ${participant.status?.connection || "offline"}" 
-data-participant-id="${participant.id}"
-onclick="app.selectParticipant('${participant.id}')">
-<div class="participant-header">
-<span class="participant-callsign">${participant.callsign}</span>
-<span class="participant-status ${participant.status?.connection || "offline"}">
-${this.getStatusIcon(participant.status?.connection || "offline")}
-</span>
-</div>
-<div class="participant-role">${participant.role}</div>
-<div class="participant-protocols">${protocols}</div>
-<div class="participant-location">${participant.status?.location || "Неизвестно"}</div>
-</div>
-`;
-});
-
-container.innerHTML = newCard + participantCards.join("");
-}
-    selectParticipant(participantId) {
-        this.selectedParticipant = participantId;
-        const participant = this.participants.get(participantId);
+    
+    renderParticipants() {
+        const container = document.getElementById('participants-container');
+        if (!container) return;
         
-        if (participant) {
-            this.showNotification(`Выбран: ${participant.callsign}`);
-        }
-    }
-
-    showNotification(message) {
-        console.log('Уведомление:', message);
-    }
-
-    updateProtocolStatuses() {
-        const statusI = document.getElementById('status-I');
-        const statusW = document.getElementById('status-W');
-        const statusA = document.getElementById('status-A');
-        const statusZ = document.getElementById('status-Z');
+        container.innerHTML = '';
         
-        if (statusI) statusI.textContent = '🟢4G';
-        if (statusW) statusW.textContent = '⚫';
-        if (statusA) statusA.textContent = '⚫';
-        if (statusZ) statusZ.textContent = '⚫';
+        // Сортировка: избранные первыми
+        const sorted = [...this.participants].sort((a, b) => {
+            if (a.favorite && !b.favorite) return -1;
+            if (!a.favorite && b.favorite) return 1;
+            return 0;
+        });
+        
+        // Отрисовка карточек участников
+        sorted.forEach(participant => {
+            const card = this.createParticipantCard(participant);
+            container.appendChild(card);
+        });
+        
+        // Добавление карточки "Новый"
+        const addCard = this.createAddCard();
+        container.appendChild(addCard);
     }
-
-addNewParticipant() {
-const callsign = prompt("Введите позывной:");
-if (callsign) {
-const newId = "new-" + Date.now();
-const newParticipant = {
-id: newId,
-callsign: callsign,
-role: "Участник",
-protocols: ["I"],
-status: {
-connection: "offline",
-location: "Неизвестно"
-},
-isFavorite: false,
-lastSeen: "Только добавлен"
-};
-
-this.participants.set(newId, newParticipant);
-this.renderParticipants();
-this.showNotification(`✅ Добавлен: ${callsign}`);
-}
-}
-
-toggleFavorite(participantId) {
-const participant = this.participants.get(participantId);
-if (participant) {
-participant.isFavorite = !participant.isFavorite;
-this.renderParticipants();
-this.showNotification(`⭐ ${participant.callsign} ${participant.isFavorite ? "добавлен в избранное" : "удален из избранного"}`);
-}
-}
-
+    
+    createParticipantCard(participant) {
+        const card = document.createElement('div');
+        card.className = 'participant-card';
+        card.dataset.id = participant.id;
+        
+        const typeIcon = {
+            'human': '👤',
+            'droid': '🤖',
+            'device': '📱'
+        }[participant.type] || '❓';
+        
+        const statusClass = participant.status === 'online' ? '' : participant.status;
+        
+        card.innerHTML = `
+            <div class="participant-header">
+                <div>
+                    <div class="participant-name">
+                        ${typeIcon} ${participant.name}
+                        ${participant.favorite ? '⭐' : ''}
+                    </div>
+                    <div class="participant-callsign">📢 "${participant.callsign}"</div>
+                </div>
+                <div class="participant-status">
+                    <span class="status-indicator ${statusClass}"></span>
+                    <span>${participant.battery}%</span>
+                </div>
+            </div>
+            <div class="participant-info">
+                <div>🎭 ${participant.role}</div>
+                <div>📡 ${participant.protocols.join(' ')}</div>
+                <div>⏱️ ${participant.lastActivity}</div>
+            </div>
+        `;
+        
+        card.addEventListener('click', () => this.onParticipantClick(participant));
+        
+        return card;
+    }
+    
+    createAddCard() {
+        const card = document.createElement('div');
+        card.className = 'participant-card add-card';
+        
+        card.innerHTML = `
+            <div class="add-icon">➕</div>
+            <div>Добавить участника</div>
+        `;
+        
+        card.addEventListener('click', () => this.addNewParticipant());
+        
+        return card;
+    }
+    
+    onParticipantClick(participant) {
+        console.log('Clicked on:', participant.name);
+        // Здесь будет логика вызова или отправки сообщения
+        alert(`Связь с ${participant.callsign}`);
+    }
+    
+    addNewParticipant() {
+        const name = prompt('Имя участника:');
+        if (!name) return;
+        
+        const callsign = prompt('Позывной:');
+        if (!callsign) return;
+        
+        const newParticipant = {
+            id: Date.now(),
+            name: name,
+            callsign: callsign,
+            type: 'human',
+            role: 'Участник',
+            status: 'offline',
+            battery: 100,
+            lastActivity: 'Новый',
+            protocols: ['I'],
+            favorite: false
+        };
+        
+        this.participants.push(newParticipant);
+        this.saveParticipants();
+        this.renderParticipants();
+    }
+    
+    saveParticipants() {
+        localStorage.setItem('participants', JSON.stringify(this.participants));
+    }
+    
     setupEventListeners() {
-        console.log('Event listeners установлены');
+        // Навигация
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const page = btn.dataset.page;
+                this.navigateTo(page);
+            });
+        });
+    }
+    
+    navigateTo(page) {
+        console.log('Navigate to:', page);
+        this.currentPage = page;
+        
+        // Обновление активной кнопки
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.page === page);
+        });
+        
+        // Здесь будет логика переключения страниц
+        if (page === 'settings') {
+            alert('Настройки в разработке');
+        }
+    }
+    
+    registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed'));
+        }
     }
 }
 
-function showInfo() {
-alert(`🔥 AllO_G v1.1.5 - Гибридный коммуникатор
-
-📡 ПРОТОКОЛЫ СВЯЗИ:
-• I - Интернет (4G/5G/WiFi)
-• W - WiFi Direct (прямое соединение)
-• A - Amateur Radio (радиосвязь)
-• Z - ZigBee Mesh (ячеистая сеть)
-
-⚡ ВОЗМОЖНОСТИ:
-• Мультипротокольная связь
-• Автопереключение каналов
-• Групповые операции
-• Голосовые команды
-• Геолокация участников
-• Избранные контакты
-
-🎯 ПРИМЕНЕНИЕ:
-• Тактические операции
-• Аварийно-спасательные работы
-• Координация групп
-• Резервная связь`);
-}
-function showProtocolInfo(protocol) {
-    const protocols = {
-        'I': 'Интернет протокол',
-        'W': 'WiFi Direct',
-        'A': 'Amateur Radio',
-        'Z': 'ZigBee Mesh'
-    };
-    alert(`${protocol}: ${protocols[protocol] || 'Неизвестный протокол'}`);
-}
-
-function openDialer() {
-    alert('📞 Диалер');
-}
-
-function openGroupActions() {
-    alert('👥 Групповые действия');
-}
-
-function openMap() {
-    alert('📍 Карта');
-}
-
-function openVoiceCommands() {
-    alert('🎤 Голосовые команды');
-}
-
-function openHelp() {
-    alert('❓ Справка');
-}
-
-function openSettings() {
-    alert('⚙️ Настройки');
-}
-
-let app;
+// Запуск приложения
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('AllO_U Started');
-    // Инициализация
-    app = new AllO_G_Communicator();
+    window.app = new AllO_App();
+    console.log('AllO_G Started');
 });

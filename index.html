@@ -3,79 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1976D2">
-    <title>AllO_G Коммуникатор</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>AllO_G - Гибридный коммуникатор</title>
     <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="assets/icons/icon-192.png">
 </head>
 <body>
     <div id="app">
-        <h1>AllO_U Loading...</h1>
-        <header class="header">
-            <div class="header-left">
-                <div class="logo" onclick="showInfo()">AllO_G</div>
-            </div>
-            <div class="header-right">
-                <div class="protocols">
-                    <div class="protocol-item" id="protocol-I" onclick="showProtocolInfo('I')">
-                        <span class="protocol-letter">I</span>
-                        <span class="protocol-status" id="status-I">🟢4G</span>
-                    </div>
-                    <div class="protocol-item" id="protocol-W" onclick="showProtocolInfo('W')">
-                        <span class="protocol-letter">W</span>
-                        <span class="protocol-status" id="status-W">⚫</span>
-                    </div>
-                    <div class="protocol-item" id="protocol-A" onclick="showProtocolInfo('A')">
-                        <span class="protocol-letter">A</span>
-                        <span class="protocol-status" id="status-A">⚫</span>
-                    </div>
-                    <div class="protocol-item" id="protocol-Z" onclick="showProtocolInfo('Z')">
-                        <span class="protocol-letter">Z</span>
-                        <span class="protocol-status" id="status-Z">⚫</span>
-                    </div>
+        <!-- Заголовок -->
+        <header class="app-header">
+            <h1 class="app-title">AllO_G</h1>
+            <div class="protocol-indicators">
+                <div class="protocol-item active" data-protocol="I">
+                    <span class="protocol-label">I</span>
+                    <span class="protocol-status">4G</span>
+                </div>
+                <div class="protocol-item" data-protocol="W">
+                    <span class="protocol-label">W</span>
+                    <span class="protocol-status">●</span>
+                </div>
+                <div class="protocol-item" data-protocol="A">
+                    <span class="protocol-label">A</span>
+                    <span class="protocol-status">●</span>
+                </div>
+                <div class="protocol-item" data-protocol="Z">
+                    <span class="protocol-label">Z</span>
+                    <span class="protocol-status">●</span>
                 </div>
             </div>
         </header>
 
-        <main class="participants-section">
-            <div class="participants-list" id="participantsList">
+        <!-- Основной контент -->
+        <main class="app-main">
+            <div id="participants-container" class="participants-grid">
+                <!-- Карточки участников будут добавлены через JS -->
             </div>
         </main>
 
-        <footer class="actions-section" id="actionsSection">
-            <div class="action-btn" onclick="openDialer()">
-                <div class="action-icon-footer">📞</div>
-                <div class="action-label">Связь</div>
-            </div>
-            <div class="action-btn" onclick="openGroupActions()">
-                <div class="action-icon-footer">👥</div>
-                <div class="action-label">Группа</div>
-            </div>
-            <div class="action-btn" onclick="openMap()">
-                <div class="action-icon-footer">📍</div>
-                <div class="action-label">Карта</div>
-            </div>
-            <div class="action-btn" onclick="openVoiceCommands()">
-                <div class="action-icon-footer">🎤</div>
-                <div class="action-label">Голос</div>
-            </div>
-            <div class="action-btn" onclick="openHelp()">
-                <div class="action-icon-footer">❓</div>
-                <div class="action-label">Справка</div>
-            </div>
-            <div class="action-btn" onclick="openSettings()">
-                <div class="action-icon-footer">⚙️</div>
-                <div class="action-label">Настройки</div>
-            </div>
-        </footer>
+        <!-- Нижняя навигация -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-page="contacts">
+                <span class="nav-icon">📞</span>
+                <span class="nav-label">Связь</span>
+            </button>
+            <button class="nav-item" data-page="groups">
+                <span class="nav-icon">👥</span>
+                <span class="nav-label">Группа</span>
+            </button>
+            <button class="nav-item" data-page="map">
+                <span class="nav-icon">📍</span>
+                <span class="nav-label">Карта</span>
+            </button>
+            <button class="nav-item" data-page="voice">
+                <span class="nav-icon">🎤</span>
+                <span class="nav-label">Голос</span>
+            </button>
+            <button class="nav-item" data-page="help">
+                <span class="nav-icon">❓</span>
+                <span class="nav-label">Справка</span>
+            </button>
+            <button class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Настройки</span>
+            </button>
+        </nav>
     </div>
 
-    <script type="module" src="js/integration.js"></script>
-    <script src="JS/app.js"></script>
-    <script src="JS/UTILS/popup-manager.js"></script>
-    <script src="JS/UTILS/swipe-manager.js"></script>
-    <script src="JS/UTILS/ui-handlers.js"></script>
-    <script src="JS/participants.js"></script>
+    <!-- Скрипты -->
+    <script src="js/app.js"></script>
 </body>
 </html>
