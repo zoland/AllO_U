@@ -1,11 +1,11 @@
-const CACHE_NAME = 'allo-g-v1';
+const CACHE_NAME = 'allo-g-v2'; // Увеличиваем версию
 const urlsToCache = [
     './',
     './index.html',
     './css/style.css',
     './js/app.js',
-    './manifest.json',
-    './assets/icons/icon-192.png'
+    './manifest.json'
+    // Временно убираем иконку из кеша
 ];
 
 self.addEventListener('install', event => {
