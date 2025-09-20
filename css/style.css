@@ -19,11 +19,19 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+/* КРИТИЧЕСКИЕ СТИЛИ - ДОЛЖНЫ БЫТЬ ПЕРВЫМИ */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
 /* Основные стили */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg-gradient);
-    background-attachment: fixed;
+    background-attachment: fixed !important;
     color: var(--text-primary);
     min-height: 100vh;
     overflow: hidden;

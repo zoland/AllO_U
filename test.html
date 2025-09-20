@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест стилей</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: white;
+            font-family: Arial;
+        }
+        .test-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0 0 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Тест стилей AllO_G</h1>
+    
+    <div class="test-card">
+        <h3>Если вы видите:</h3>
+        <ul>
+            <li>✅ Синий градиентный фон</li>
+            <li>✅ Полупрозрачную карточку</li>
+            <li>✅ Белый текст</li>
+        </ul>
+        <p>Значит стили работают правильно!</p>
+    </div>
+    
+    <div class="test-card">
+        <h3>Ссылки для проверки:</h3>
+        <p><a href="index.html" style="color: white;">→ Главная страница</a></p>
+        <p><a href="css/style.css" style="color: white;">→ Файл стилей</a></p>
+    </div>
+</body>
+</html>
