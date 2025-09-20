@@ -6,7 +6,6 @@
     <title>AllO_G - Гибридный коммуникатор</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="css/style.css">
-    
     <link rel="shortcut icon" type="image/png" href="assets/icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
     <link rel="apple-touch-icon" sizes="192x192" href="assets/icons/icon-192.png">
@@ -14,9 +13,15 @@
 </head>
 <body>
     <div id="app">
-        <!-- Заголовок -->
+        <!-- Фиксированный заголовок -->
         <header class="app-header">
-            <h1 class="app-title">AllO_G</h1>
+            <div class="header-left">
+                <button class="info-button" onclick="app.showInfo()">
+                    <span class="info-icon">ℹ️</span>
+                </button>
+                <h1 class="app-title">AllO_G</h1>
+            </div>
+            
             <div class="protocol-indicators">
                 <div class="protocol-item active" data-protocol="I">
                     <span class="protocol-label">I</span>
@@ -35,16 +40,20 @@
                     <span class="protocol-status">●</span>
                 </div>
             </div>
+            
+            <button class="menu-button" onclick="app.showMenu()">
+                <span class="menu-icon">⋮</span>
+            </button>
         </header>
 
-        <!-- Основной контент -->
+        <!-- Скроллируемый контент -->
         <main class="app-main">
             <div id="participants-container" class="participants-grid">
-                <!-- Карточки участников будут добавлены через JS -->
+                <!-- Карточки участников -->
             </div>
         </main>
 
-        <!-- Нижняя навигация -->
+        <!-- Фиксированная нижняя навигация -->
         <nav class="bottom-nav">
             <button class="nav-item active" data-page="contacts">
                 <span class="nav-icon">📞</span>
@@ -73,7 +82,6 @@
         </nav>
     </div>
 
-    <!-- Скрипты -->
     <script src="js/app.js"></script>
 </body>
 </html>
