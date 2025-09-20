@@ -1,12 +1,24 @@
-const CACHE_NAME = 'allo-g-v2'; // Увеличиваем версию
+const CACHE_NAME = 'allo-g-v3'; // Изменили версию с v1/v2 на v3
 const urlsToCache = [
     './',
     './index.html',
     './css/style.css',
     './js/app.js',
     './manifest.json'
-    // Временно убираем иконку из кеша
 ];
+
+// Добавьте очистку старого кеша
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames
+                    .filter(cacheName => cacheName !== CACHE_NAME)
+                    .map(cacheName => caches.delete(cacheName))
+            );
+        })
+    );
+});
 
 self.addEventListener('install', event => {
     event.waitUntil(
