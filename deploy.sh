@@ -1,20 +1,114 @@
 #!/bin/bash
 
-# Build (если нужно)
-echo "📦 Подготовка к деплою..."
+# Цвета для вывода
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-# Создание ветки gh-pages
-git checkout -b gh-pages
+# Заголовок
+echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
+echo -e "${BLUE}║       AllO_U Deployment Script         ║${NC}"
+echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
+echo ""
+
+# Проверка git статуса
+echo -e "${YELLOW}📊 Проверка статуса репозитория...${NC}"
+git status --short
+
+# Запрос сообщения коммита
+echo ""
+echo -e "${YELLOW}💬 Введите сообщение коммита:${NC}"
+read -r commit_message
+
+# Если сообщение пустое, используем дефолтное
+if [ -z "$commit_message" ]; then
+    commit_message="Update $(date +'%Y-%m-%d %H:%M')"
+    echo -e "${YELLOW}   Используется: $commit_message${NC}"
+fi
+
+# Увеличение версии в файлах для обхода кеша
+echo ""
+echo -e "${GREEN}🔄 Обновление версий для очистки кеша...${NC}"
+
+# Генерируем timestamp для версии
+VERSION=$(date +%s)
+
+# Обновляем версии в index.html
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    sed -i '' "s/style\.css?v=[0-9]*/style.css?v=$VERSION/g" index.html
+    sed -i '' "s/app\.js?v=[0-9]*/app.js?v=$VERSION/g" index.html
+else
+    # Linux
+    sed -i "s/style\.css?v=[0-9]*/style.css?v=$VERSION/g" index.html
+    sed -i "s/app\.js?v=[0-9]*/app.js?v=$VERSION/g" index.html
+fi
+
+# Если версии еще не добавлены, добавляем их
+if ! grep -q "style.css?v=" index.html; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "s/style\.css/style.css?v=$VERSION/g" index.html
+        sed -i '' "s/app\.js/app.js?v=$VERSION/g" index.html
+    else
+        sed -i "s/style\.css/style.css?v=$VERSION/g" index.html
+        sed -i "s/app\.js/app.js?v=$VERSION/g" index.html
+    fi
+fi
+
+echo -e "${GREEN}   ✅ Версия обновлена: $VERSION${NC}"
+
+# Git операции
+echo ""
+echo -e "${BLUE}🚀 Начинаем деплой...${NC}"
+
+# Добавление файлов
+echo -e "${YELLOW}📁 Добавление файлов...${NC}"
+git add .
 
 # Коммит
-git add .
-git commit -m "Deploy to GitHub Pages"
+echo -e "${YELLOW}📝 Создание коммита...${NC}"
+git commit -m "$commit_message"
 
-# Пуш на GitHub Pages
-git push origin gh-pages --force
+# Push
+echo -e "${YELLOW}📤 Отправка на GitHub...${NC}"
+git push origin main
 
-# Возврат на main
-git checkout main
+# Проверка успешности
+if [ $? -eq 0 ]; then
+    echo ""
+    echo -e "${GREEN}╔════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║         ✅ ДЕПЛОЙ УСПЕШЕН!            ║${NC}"
+    echo -e "${GREEN}╚════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${BLUE}🔗 Сайт обновится через 2-5 минут:${NC}"
+    echo -e "${BLUE}   https://zoland.github.io/AllO_U/${NC}"
+    echo ""
+    echo -e "${YELLOW}💡 Совет: Откройте в режиме инкогнито или${NC}"
+    echo -e "${YELLOW}   очистите кеш (Cmd+Shift+R)${NC}"
+else
+    echo ""
+    echo -e "${RED}╔════════════════════════════════════════╗${NC}"
+    echo -e "${RED}║         ❌ ОШИБКА ДЕПЛОЯ!             ║${NC}"
+    echo -e "${RED}╚════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${RED}Проверьте ошибки выше и попробуйте снова${NC}"
+    exit 1
+fi
 
-echo "✅ Деплой завершен!"
-echo "🌐 Доступно по адресу: https://zoland.github.io/AllO_U/"
+# Опционально: открыть сайт
+echo ""
+echo -e "${YELLOW}🌐 Открыть сайт сейчас? (y/n):${NC}"
+read -r open_site
+
+if [[ "$open_site" == "y" || "$open_site" == "Y" ]]; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        open "https://zoland.github.io/AllO_U/?v=$VERSION"
+    else
+        xdg-open "https://zoland.github.io/AllO_U/?v=$VERSION"
+    fi
+fi
+
+echo ""
+echo -e "${GREEN}✨ Готово!${NC}"
