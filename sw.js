@@ -1,24 +1,24 @@
-const CACHE_NAME = 'allo-g-v3'; // Изменили версию с v1/v2 на v3
+// sw.js
+const CACHE_NAME = 'allo-g-v1.2.0';
 const urlsToCache = [
     './',
     './index.html',
-    './css/style.css',
+    './css/styles.css',
     './js/app.js',
+    './js/utils/Constants.js',
+    './js/models/Scene.js',
+    './js/models/Participant.js',
+    './js/models/Event.js',
+    './js/models/Profile.js',
+    './js/services/StorageService.js',
+    './js/services/TestDataService.js',
+    './js/services/ImageService.js',
+    './js/views/ScenesView.js',
+    './js/views/TeamView.js',
+    './js/views/EventsView.js',
+    './js/views/LocatorView.js',
     './manifest.json'
 ];
-
-// Добавьте очистку старого кеша
-self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames
-                    .filter(cacheName => cacheName !== CACHE_NAME)
-                    .map(cacheName => caches.delete(cacheName))
-            );
-        })
-    );
-});
 
 self.addEventListener('install', event => {
     event.waitUntil(
