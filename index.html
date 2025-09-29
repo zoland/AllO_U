@@ -2,86 +2,199 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AllO_G - Гибридный коммуникатор</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="css/style.css?v=1758636762">
-    <link rel="shortcut icon" type="image/png" href="assets/icons/icon-192.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="assets/icons/icon-192.png">
-    <meta name="theme-color" content="#667eea">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    
+    <title>AllO_U - Театральный коммуникатор</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🎭</text></svg>">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/styles.css">
 </head>
+
 <body>
     <div id="app">
-        <!-- Фиксированный заголовок -->
+        <!-- Header -->
         <header class="app-header">
-            <div class="header-left">
-                <button class="info-button" onclick="app.showInfo()">
-                    <span class="info-icon">ℹ️</span>
+            <div class="header-content">
+                <button class="app-logo-btn" id="logoBtn">
+                    <span class="app-logo">🎭 AllO_U</span>
                 </button>
-                <h1 class="app-title">AllO_G</h1>
-            </div>
-            
-            <div class="protocol-indicators">
-                <div class="protocol-item active" data-protocol="I">
-                    <span class="protocol-label">I</span>
-                    <span class="protocol-status">4G</span>
+                <div class="connection-indicators">
+                    <span class="indicator" data-protocol="W">[W]</span>
+                    <span class="indicator" data-protocol="A">[A]</span>
                 </div>
-                <div class="protocol-item" data-protocol="W">
-                    <span class="protocol-label">W</span>
-                    <span class="protocol-status">●</span>
-                </div>
-                <div class="protocol-item" data-protocol="A">
-                    <span class="protocol-label">A</span>
-                    <span class="protocol-status">●</span>
-                </div>
-                <div class="protocol-item" data-protocol="Z">
-                    <span class="protocol-label">Z</span>
-                    <span class="protocol-status">●</span>
+                <button class="menu-btn" id="menuBtn">⋮</button>
+                
+                <!-- Dropdown Menu -->
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <button class="dropdown-item" id="profileBtn">
+                        <span>👤</span> Мой профиль
+                    </button>
+                    <button class="dropdown-item" id="settingsBtn">
+                        <span>⚙️</span> Настройки
+                    </button>
+                    <button class="dropdown-item" id="aboutBtn">
+                        <span>ℹ️</span> О программе
+                    </button>
                 </div>
             </div>
-            
-            <button class="menu-button" onclick="app.showMenu()">
-                <span class="menu-icon">⋮</span>
-            </button>
         </header>
 
-        <!-- Скроллируемый контент -->
-        <main class="app-main">
-            <div id="participants-container" class="participants-grid">
-                <!-- Карточки участников -->
-            </div>
+        <!-- Main Content -->
+        <main class="app-content" id="mainContent">
+            <!-- Dynamic content loads here -->
         </main>
 
-        <!-- Фиксированная нижняя навигация -->
-        <nav class="bottom-nav">
-            <button class="nav-item active" data-page="contacts">
-                <span class="nav-icon">📞</span>
-                <span class="nav-label">Связь</span>
+        <!-- Navigation - 4 buttons -->
+        <nav class="app-nav">
+            <button class="nav-btn active" data-view="scenes">
+                <span class="nav-icon">🎬</span>
+                <span class="nav-label">Сцены</span>
             </button>
-            <button class="nav-item" data-page="groups">
+            <button class="nav-btn" data-view="team">
                 <span class="nav-icon">👥</span>
-                <span class="nav-label">Группа</span>
+                <span class="nav-label">Команда</span>
             </button>
-            <button class="nav-item" data-page="map">
-                <span class="nav-icon">📍</span>
-                <span class="nav-label">Карта</span>
+            <button class="nav-btn" data-view="events">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">События</span>
             </button>
-            <button class="nav-item" data-page="voice">
-                <span class="nav-icon">🎤</span>
-                <span class="nav-label">Голос</span>
-            </button>
-            <button class="nav-item" data-page="help">
-                <span class="nav-icon">❓</span>
-                <span class="nav-label">Справка</span>
-            </button>
-            <button class="nav-item" data-page="settings">
-                <span class="nav-icon">⚙️</span>
-                <span class="nav-label">Настройки</span>
+            <button class="nav-btn" data-view="locator">
+                <span class="nav-icon">📡</span>
+                <span class="nav-label">Локатор</span>
             </button>
         </nav>
+
+        <!-- About Modal -->
+        <div class="modal" id="aboutModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>О приложении</h2>
+                    <button class="close-btn" id="closeAbout">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="app-info">
+                        <h3>🎭 AllO_U</h3>
+                        <p>Универсальная платформа управления и коммуникации</p>
+                        <div class="info-details">
+                            <p><strong>Версия:</strong> 1.2.0</p>
+                            <p><strong>Автор:</strong> AllO_U Team</p>
+                            <p><strong>Лицензия:</strong> MIT</p>
+                            <p><strong>Сборка:</strong> 2024</p>
+                        </div>
+                    </div>
+                    <div class="test-data-section">
+                        <h4>⚠️ Тестовые данные</h4>
+                        <p>Сбросить все данные и загрузить тестовый набор?</p>
+                        <button class="btn btn-danger" id="resetDataBtn">
+                            🔄 Сбросить данные
+                        </button>
+                    </div>
+                    <div class="help-section">
+                        <h4>📖 Справка</h4>
+                        <p><strong>Навигация:</strong></p>
+                        <ul style="text-align: left; margin: 10px 0;">
+                            <li>Тап по участнику - открыть детали</li>
+                            <li>Тап на ⭐ - добавить в избранное</li>
+                            <li>Свайп влево - удалить</li>
+                            <li>Клик на логотип - эта справка</li>
+                        </ul>
+                        <p><strong>Индикаторы:</strong></p>
+                        <ul style="text-align: left; margin: 10px 0;">
+                            <li>🟢 В сети</li>
+                            <li>🟡 Занят</li>
+                            <li>🔴 Недоступен</li>
+                            <li>⚫ Офлайн</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+        <!-- Profile Modal -->
+        <div class="modal" id="profileModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>👤 Мой профиль</h2>
+                    <button class="close-btn" id="closeProfile">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="profile-form">
+                        <!-- Avatar -->
+                        <div class="avatar-section">
+                            <div class="avatar-preview" id="avatarPreview">
+                                <span>👤</span>
+                            </div>
+                            <button class="btn btn-secondary" id="changeAvatarBtn">
+                                📷 Изменить фото
+                            </button>
+                            <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                        </div>
+                        
+                        <!-- Form fields -->
+                        <div class="form-group">
+                            <label for="callsignInput">Позывной *</label>
+                            <input type="text" id="callsignInput" maxlength="20" placeholder="Альфа">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nameInput">Имя</label>
+                            <input type="text" id="nameInput" placeholder="Иван Петров">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phoneInput">Телефон</label>
+                            <input type="tel" id="phoneInput" placeholder="+7 900 123-45-67">
+                        </div>
+                        
+                        <!-- Visibility settings -->
+                        <div class="visibility-section">
+                            <h3>📡 Видимость</h3>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="visibleInNetwork" checked>
+                                <span>Показывать в Локаторе</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="shareLocation" checked>
+                                <span>Делиться локацией</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="acceptCalls" checked>
+                                <span>Принимать вызовы</span>
+                            </label>
+                        </div>
+                        
+                        <button class="btn btn-primary" id="saveProfileBtn">
+                            💾 Сохранить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="js/app.js?v=1758636762"></script>
+    <!-- Scripts - правильный порядок -->
+    <script src="./js/utils/Constants.js"></script>
+    <script src="./js/models/Scene.js"></script>
+    <script src="./js/models/Participant.js"></script>
+    <script src="./js/models/Event.js"></script>
+    <script src="./js/models/Profile.js"></script>
+    <script src="./js/services/StorageService.js"></script>
+    <script src="./js/services/TestDataService.js"></script>
+    <script src="./js/services/ImageService.js"></script>
+    <script src="./js/views/ScenesView.js"></script>
+    <script src="./js/views/TeamView.js"></script>
+    <script src="./js/views/EventsView.js"></script>
+    <script src="./js/views/LocatorView.js"></script>
+    <script src="./js/app.js?v=1758978379"></script>
 </body>
 </html>

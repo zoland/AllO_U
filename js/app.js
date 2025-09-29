@@ -1,316 +1,335 @@
-// Главный класс приложения AllO_G
-class AllO_App {
+class App {
     constructor() {
-        this.version = '1.1.5';
-        this.participants = [];
-        this.currentPage = 'contacts';
-        this.protocols = {
-            'I': { name: 'Internet', active: true, signal: '4G' },
-            'W': { name: 'WiFi Direct', active: false },
-            'A': { name: 'Amateur Radio', active: false },
-            'Z': { name: 'ZigBee Mesh', active: false }
+        this.storage = new StorageService();
+        this.currentView = 'scenes';
+        this.views = {
+            scenes: new ScenesView(),
+            team: new TeamView(),
+            events: new EventsView(),
+            locator: new LocatorView() // НОВОЕ
         };
+        this.profile = null;
         
         this.init();
     }
-    
-    // Инициализация приложения
+
     init() {
-        console.log(`🚀 AllO_G v${this.version} Starting...`);
-        this.loadParticipants();
-        this.renderParticipants();
+        // Load profile
+        this.profile = this.storage.loadProfile();
+        
+        // Check if first launch
+        if (this.storage.isFirstLaunch()) {
+            console.log('First launch detected, loading test data...');
+            TestDataService.resetToTestData();
+        }
+        
+        // Load app state
+        const appState = this.storage.loadAppState();
+        this.currentView = appState.currentView || 'scenes';
+        
+        // Setup event listeners
         this.setupEventListeners();
-        this.setupTouchHandlers();
+        
+        // Register service worker
         this.registerServiceWorker();
+        
+        // Initial render
+        this.render();
     }
-    
-    // Загрузка участников
-    loadParticipants() {
-        // Тестовые данные с новой структурой
-        const defaultParticipants = [
-            {
-                id: 'user-001',
-                callsign: 'Альфа',
-                name: 'Анна Сидорова',
-                role: 'Оператор',
-                protocols: ['I', 'W'],
-                status: {
-                    connection: 'online',
-                    location: 'База-1'
-                },
-                isFavorite: true,
-                battery: 67,
-                lastActivity: '2м назад'
-            },
-            {
-                id: 'droid-001',
-                callsign: 'Бета',
-                name: 'Дроид R2',
-                role: 'Разведчик',
-                protocols: ['W', 'Z'],
-                status: {
-                    connection: 'online',
-                    location: 'Сектор-7'
-                },
-                isFavorite: false,
-                battery: 89,
-                lastActivity: 'Сейчас'
-            },
-            {
-                id: 'device-001',
-                callsign: 'Гамма',
-                name: 'Метеостанция',
-                role: 'Монитор',
-                protocols: ['Z'],
-                status: {
-                    connection: 'away',
-                    location: 'Вышка-3'
-                },
-                isFavorite: false,
-                battery: 100,
-                lastActivity: '5м назад'
-            }
-        ];
-        
-        // Загрузка из localStorage или использование тестовых
-        const saved = localStorage.getItem('allo_participants');
-        if (saved) {
-            try {
-                this.participants = JSON.parse(saved);
-            } catch (e) {
-                this.participants = defaultParticipants;
-            }
-        } else {
-            this.participants = defaultParticipants;
-        }
-    }
-    
-    // Сортировка участников
-    sortParticipants() {
-        return [...this.participants].sort((a, b) => {
-            // Сначала избранные
-            if (a.isFavorite && !b.isFavorite) return -1;
-            if (!a.isFavorite && b.isFavorite) return 1;
-            // Затем по позывному
-            return a.callsign.localeCompare(b.callsign);
-        });
-    }
-    
-    // Отрисовка участников
-    renderParticipants() {
-        const container = document.getElementById('participants-container');
-        if (!container) return;
-        
-        container.innerHTML = '';
-        
-        // Сортированные участники
-        const sorted = this.sortParticipants();
-        
-        // Создание карточек
-        sorted.forEach(participant => {
-            const card = this.createParticipantCard(participant);
-            container.appendChild(card);
-        });
-        
-        // Карточка добавления
-        const addCard = this.createAddCard();
-        container.appendChild(addCard);
-    }
-    
-    // Создание карточки участника
-    createParticipantCard(participant) {
-        const card = document.createElement('div');
-        card.className = `participant-card ${participant.isFavorite ? 'favorite' : ''}`;
-        card.dataset.id = participant.id;
-        
-        const statusClass = participant.status.connection;
-        
-        card.innerHTML = `
-            <button class="favorite-button" onclick="app.toggleFavorite('${participant.id}')">
-                ${participant.isFavorite ? '⭐' : '☆'}
-            </button>
-            
-            <div class="participant-header">
-                <div>
-                    <div class="participant-name">
-                        ${participant.name}
-                    </div>
-                    <div class="participant-callsign">
-                        📢 "${participant.callsign}"
-                    </div>
-                </div>
-                <div class="participant-status">
-                    <span class="status-indicator ${statusClass}"></span>
-                    <span>${participant.battery}%🔋</span>
-                </div>
-            </div>
-            
-            <div class="participant-info">
-                <div>🎭 ${participant.role}</div>
-                <div>📡 ${participant.protocols.join(' • ')}</div>
-                <div>📍 ${participant.status.location}</div>
-                <div>⏱️ ${participant.lastActivity}</div>
-            </div>
-        `;
-        
-        // Обработчик клика на карточку
-        card.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('favorite-button')) {
-                this.onParticipantClick(participant);
-            }
-        });
-        
-        return card;
-    }
-    
-    // Создание карточки добавления
-    createAddCard() {
-        const card = document.createElement('div');
-        card.className = 'participant-card add-card';
-        
-        card.innerHTML = `
-            <div class="add-icon" style="font-size: 48px;">➕</div>
-            <div style="margin-top: 10px;">Добавить участника</div>
-        `;
-        
-        card.addEventListener('click', () => this.addNewParticipant());
-        
-        return card;
-    }
-    
-    // Переключение избранного
-    toggleFavorite(participantId) {
-        const participant = this.participants.find(p => p.id === participantId);
-        if (participant) {
-            participant.isFavorite = !participant.isFavorite;
-            this.saveParticipants();
-            this.renderParticipants();
-        }
-    }
-    
-    // Показать информацию о программе
-    showInfo() {
-        const info = `🔥 AllO_G v${this.version} - Гибридный коммуникатор
 
-📡 ПРОТОКОЛЫ СВЯЗИ:
-• I - Интернет (4G/5G/WiFi)
-• W - WiFi Direct (прямое соединение)
-• A - Amateur Radio (радиосвязь)
-• Z - ZigBee Mesh (ячеистая сеть)
-
-⚡ ВОЗМОЖНОСТИ:
-• Мультипротокольная связь
-• Избранные контакты
-• Офлайн режим
-• Шифрование данных
-
-👥 Участников: ${this.participants.length}
-⭐ Избранных: ${this.participants.filter(p => p.isFavorite).length}`;
-        
-        alert(info);
-    }
-    
-    // Показать меню
-    showMenu() {
-        alert('⚙️ Меню в разработке');
-    }
-    
-    // Клик на участника
-    onParticipantClick(participant) {
-        console.log('Connecting to:', participant.callsign);
-        alert(`📞 Вызов: ${participant.callsign}\n📍 ${participant.status.location}`);
-    }
-    
-    // Добавление нового участника
-    addNewParticipant() {
-        const callsign = prompt('Позывной участника:');
-        if (!callsign) return;
-        
-        const name = prompt('Имя участника:');
-        if (!name) return;
-        
-        const role = prompt('Роль (например: Оператор, Разведчик):') || 'Участник';
-        
-        const newParticipant = {
-            id: `user-${Date.now()}`,
-            callsign: callsign,
-            name: name,
-            role: role,
-            protocols: ['I'],
-            status: {
-                connection: 'offline',
-                location: 'Неизвестно'
-            },
-            isFavorite: false,
-            battery: 100,
-            lastActivity: 'Новый'
-        };
-        
-        this.participants.push(newParticipant);
-        this.saveParticipants();
-        this.renderParticipants();
-    }
-    
-    // Сохранение в localStorage
-    saveParticipants() {
-        localStorage.setItem('allo_participants', JSON.stringify(this.participants));
-    }
-    
-    // Настройка обработчиков событий
     setupEventListeners() {
-        // Навигация
-        document.querySelectorAll('.nav-item').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const page = btn.dataset.page;
-                this.navigateTo(page);
+        // Navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const view = btn.dataset.view;
+                this.switchView(view);
             });
         });
-    }
-    
-    // Touch обработчики для мобильных
-    setupTouchHandlers() {
-        // Предотвращение случайного масштабирования
-        document.addEventListener('gesturestart', (e) => e.preventDefault());
         
-        // Улучшение отзывчивости
-        document.addEventListener('touchstart', () => {}, {passive: true});
-    }
-    
-    // Навигация
-    navigateTo(page) {
-        console.log('Navigate to:', page);
-        this.currentPage = page;
+        // Logo button - справка
+        const logoBtn = document.getElementById('logoBtn');
+        if (logoBtn) {
+            logoBtn.addEventListener('click', () => {
+                this.showAboutModal();
+            });
+        }
         
-        // Обновление активной кнопки
-        document.querySelectorAll('.nav-item').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.page === page);
+        // Menu button - ОБНОВЛЕНО для dropdown
+        const menuBtn = document.getElementById('menuBtn');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleDropdownMenu();
+            });
+        }
+
+        // Dropdown menu items
+        const profileBtn = document.getElementById('profileBtn');
+        if (profileBtn) {
+            profileBtn.addEventListener('click', () => {
+                this.hideDropdownMenu();
+                this.showProfileModal();
+            });
+        }
+
+        const aboutBtn = document.getElementById('aboutBtn');
+        if (aboutBtn) {
+            aboutBtn.addEventListener('click', () => {
+                this.hideDropdownMenu();
+                this.showAboutModal();
+            });
+        }
+
+        const settingsBtn = document.getElementById('settingsBtn');
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', () => {
+                this.hideDropdownMenu();
+                alert('Настройки будут доступны в версии 1.3');
+            });
+        }
+
+        // Profile modal
+        this.setupProfileModalListeners();
+        
+        // About modal
+        const closeAbout = document.getElementById('closeAbout');
+        if (closeAbout) {
+            closeAbout.addEventListener('click', () => {
+                this.hideAboutModal();
+            });
+        }
+        
+        // Reset data button
+        const resetBtn = document.getElementById('resetDataBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                if (confirm('Это удалит все данные и загрузит тестовый набор. Продолжить?')) {
+                    TestDataService.resetToTestData();
+                    this.profile = this.storage.loadProfile(); // Reload profile
+                    this.render();
+                    this.hideAboutModal();
+                    alert('Тестовые данные загружены успешно!');
+                }
+            });
+        }
+        
+        // Click outside to close modals and dropdown
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('dropdownMenu');
+            const menuBtn = document.getElementById('menuBtn');
+            if (dropdown && !dropdown.contains(e.target) && e.target !== menuBtn) {
+                this.hideDropdownMenu();
+            }
         });
         
-        // Страницы-заглушки
-        const pages = {
-            'groups': '👥 Группы в разработке',
-            'map': '📍 Карта в разработке',
-            'voice': '🎤 Голосовая связь в разработке',
-            'help': '❓ Справка в разработке',
-            'settings': '⚙️ Настройки в разработке'
-        };
+        // Modal backgrounds
+        document.getElementById('aboutModal').addEventListener('click', (e) => {
+            if (e.target.id === 'aboutModal') {
+                this.hideAboutModal();
+            }
+        });
+
+        document.getElementById('profileModal').addEventListener('click', (e) => {
+            if (e.target.id === 'profileModal') {
+                this.hideProfileModal();
+            }
+        });
+    }
+
+    setupProfileModalListeners() {
+        const closeProfile = document.getElementById('closeProfile');
+        if (closeProfile) {
+            closeProfile.addEventListener('click', () => {
+                this.hideProfileModal();
+            });
+        }
+
+        // Avatar change
+        const changeAvatarBtn = document.getElementById('changeAvatarBtn');
+        const avatarInput = document.getElementById('avatarInput');
         
-        if (pages[page]) {
-            alert(pages[page]);
+        if (changeAvatarBtn && avatarInput) {
+            changeAvatarBtn.addEventListener('click', () => {
+                avatarInput.click();
+            });
+
+            avatarInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    if (!ImageService.isValidImageFile(file)) {
+                        alert('Пожалуйста, выберите изображение (JPEG, PNG, GIF, WebP)');
+                        return;
+                    }
+
+                    try {
+                        const compressed = await ImageService.compressImage(file);
+                        const preview = document.getElementById('avatarPreview');
+                        preview.innerHTML = `<img src="${compressed}" alt="Avatar">`;
+                        preview.dataset.avatar = compressed;
+                    } catch (error) {
+                        console.error('Error compressing image:', error);
+                        alert('Ошибка при обработке изображения');
+                    }
+                }
+            });
+        }
+
+        // Save profile
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        if (saveProfileBtn) {
+            saveProfileBtn.addEventListener('click', () => {
+                this.saveProfile();
+            });
         }
     }
-    
-    // Service Worker
-    registerServiceWorker() {
+
+    toggleDropdownMenu() {
+        const dropdown = document.getElementById('dropdownMenu');
+        dropdown.classList.toggle('show');
+    }
+
+    hideDropdownMenu() {
+        const dropdown = document.getElementById('dropdownMenu');
+        dropdown.classList.remove('show');
+    }
+
+    showProfileModal() {
+        const modal = document.getElementById('profileModal');
+        
+        // Load current profile data
+        const profile = this.storage.loadProfile();
+        
+        // Set form values
+        document.getElementById('callsignInput').value = profile.callsign || '';
+        document.getElementById('nameInput').value = profile.name || '';
+        document.getElementById('phoneInput').value = profile.phone || '';
+        
+        // Set avatar
+        const preview = document.getElementById('avatarPreview');
+        if (profile.avatar) {
+            preview.innerHTML = `<img src="${profile.avatar}" alt="Avatar">`;
+            preview.dataset.avatar = profile.avatar;
+        } else {
+            preview.innerHTML = '<span>👤</span>';
+            preview.dataset.avatar = '';
+        }
+        
+        // Set visibility checkboxes
+        document.getElementById('visibleInNetwork').checked = profile.visibility.inNetwork;
+        document.getElementById('shareLocation').checked = profile.visibility.location;
+        document.getElementById('acceptCalls').checked = profile.visibility.acceptCalls;
+        
+        modal.classList.add('show');
+    }
+
+    hideProfileModal() {
+        const modal = document.getElementById('profileModal');
+        modal.classList.remove('show');
+    }
+
+    saveProfile() {
+        const callsign = document.getElementById('callsignInput').value.trim();
+        const name = document.getElementById('nameInput').value.trim();
+        const phone = document.getElementById('phoneInput').value.trim();
+        const avatarPreview = document.getElementById('avatarPreview');
+        const avatar = avatarPreview.dataset.avatar || null;
+        
+        // Validate callsign
+        if (!callsign) {
+            alert('Позывной обязателен!');
+            return;
+        }
+        
+        // Check uniqueness
+        if (!this.storage.isCallsignUnique(callsign, 'my_profile')) {
+            alert('Этот позывной уже используется! Выберите другой.');
+            return;
+        }
+        
+        // Create profile object
+        const profile = new Profile({
+            callsign,
+            name,
+            phone,
+            avatar,
+            visibility: {
+                inNetwork: document.getElementById('visibleInNetwork').checked,
+                location: document.getElementById('shareLocation').checked,
+                acceptCalls: document.getElementById('acceptCalls').checked
+            }
+        });
+        
+        // Validate
+        const errors = profile.validate();
+        if (errors.length > 0) {
+            alert('Ошибки:\n' + errors.join('\n'));
+            return;
+        }
+        
+        // Save
+        this.storage.saveProfile(profile);
+        this.profile = profile;
+        
+        alert('Профиль сохранен!');
+        this.hideProfileModal();
+    }
+
+    switchView(viewName) {
+        if (this.currentView === viewName) return;
+        
+        this.currentView = viewName;
+        
+        // Update navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === viewName);
+        });
+        
+        // Save state
+        const appState = this.storage.loadAppState();
+        appState.currentView = viewName;
+        this.storage.saveAppState(appState);
+        
+        // Render new view
+        this.render();
+    }
+
+    render() {
+        const mainContent = document.getElementById('mainContent');
+        const view = this.views[this.currentView];
+        
+        if (view) {
+            mainContent.innerHTML = view.render();
+            view.attachEventListeners();
+        }
+    }
+
+    showAboutModal() {
+        const modal = document.getElementById('aboutModal');
+        if (modal) {
+            modal.classList.add('show');
+        }
+    }
+
+    hideAboutModal() {
+        const modal = document.getElementById('aboutModal');
+        if (modal) {
+            modal.classList.remove('show');
+        }
+    }
+
+    async registerServiceWorker() {
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('✅ Service Worker registered'))
-                .catch(err => console.log('❌ SW registration failed:', err));
+            try {
+                await navigator.serviceWorker.register('/sw.js');
+                console.log('Service Worker registered');
+            } catch (error) {
+                console.log('Service Worker registration failed:', error);
+            }
         }
     }
 }
 
-// Запуск приложения
+// Start app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    window.app = new AllO_App();
+    window.app = new App();
 });

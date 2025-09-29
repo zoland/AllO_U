@@ -1,14 +1,6 @@
 #!/bin/bash
 
-# Проверка соединения с GitHub
-echo -e "${YELLOW}🔍 Проверка соединения с GitHub...${NC}"
-if ping -c 1 github.com &> /dev/null; then
-    echo -e "${GREEN}   ✅ GitHub доступен${NC}"
-else
-    echo -e "${RED}   ❌ GitHub недоступен!${NC}"
-    echo -e "${YELLOW}   Проверьте интернет-соединение${NC}"
-    exit 1
-fi
+# Deploy script for AllO_G v1.2.0
 
 # Цвета для вывода
 RED='\033[0;31m'
@@ -22,6 +14,58 @@ echo -e "${BLUE}╔════════════════════�
 echo -e "${BLUE}║       AllO_U Deployment Script         ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
 echo ""
+
+echo -e "${BLUE}🚀 Deploying AllO_G v1.2.0...${NC}"
+# Create version tag
+VERSION="U_v1.2.0"
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+DEPLOY_DIR="deploy_${VERSION}_${TIMESTAMP}"
+
+# Create deployment directory
+mkdir -p $DEPLOY_DIR
+
+# Copy all files
+echo "📦 Copying files..."
+cp -r assets $DEPLOY_DIR/
+cp -r css $DEPLOY_DIR/
+cp -r docs $DEPLOY_DIR/
+cp -r index.html $DEPLOY_DIR/
+cp -r js $DEPLOY_DIR/
+cp -r manifest.json $DEPLOY_DIR/
+cp -r sw.js $DEPLOY_DIR/
+cp -r version.txt $DEPLOY_DIR/
+
+# Create info file
+echo "📝 Creating deployment info..."
+cat > $DEPLOY_DIR/deploy_info.txt << EOF
+AllO_U Deployment
+Version: $VERSION
+Date: $(date)
+Features:
+EOF
+
+# Create zip archive
+echo "🗜️ Creating archive..."
+zip -r "${DEPLOY_DIR}.zip" $DEPLOY_DIR
+
+echo "✅ Deployment package ready: ${DEPLOY_DIR}.zip"
+echo "📊 Total size: $(du -sh $DEPLOY_DIR | cut -f1)"
+
+# Optional: Upload to server
+# scp "${DEPLOY_DIR}.zip" user@server:/path/to/deployment/
+
+
+echo -e "${BLUE}🚀 Деплой AllO_U Research на GitHub Pages...${NC}"
+
+# Проверка соединения с GitHub
+echo -e "${YELLOW}🔍 Проверка соединения с GitHub...${NC}"
+if ping -c 1 github.com &> /dev/null; then
+    echo -e "${GREEN}   ✅ GitHub доступен${NC}"
+else
+    echo -e "${RED}   ❌ GitHub недоступен!${NC}"
+    echo -e "${YELLOW}   Проверьте интернет-соединение${NC}"
+    exit 1
+fi
 
 # Проверка git статуса
 echo -e "${YELLOW}📊 Проверка статуса репозитория...${NC}"
@@ -112,6 +156,8 @@ echo ""
 echo -e "${YELLOW}🌐 Открыть сайт сейчас? (y/n):${NC}"
 read -r open_site
 
+echo "📱 Откройте на телефоне: https://zoland.github.io/AllO_U/?v=$VERSION"
+
 if [[ "$open_site" == "y" || "$open_site" == "Y" ]]; then
     if [[ "$OSTYPE" == "darwin"* ]]; then
         open "https://zoland.github.io/AllO_U/?v=$VERSION"
@@ -121,4 +167,14 @@ if [[ "$open_site" == "y" || "$open_site" == "Y" ]]; then
 fi
 
 echo ""
-echo -e "${GREEN}✨ Готово!${NC}"
+echo -e "${GREEN}🎉 Deployment complete!${NC}"
+
+
+# echo "�� AllO_U v1.2.0 запуск..."
+# echo "🌐 Открываем http://localhost:8000"
+
+# Автоматически открываем браузер (macOS)
+# sleep 1 && open http://localhost:8000/HTML/ &
+
+# Запускаем сервер из корня AllO_U
+# python3 -m http.server 8000
