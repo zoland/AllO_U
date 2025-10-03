@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_NAME = 'allo-u-v1.2.0';
+const CACHE_NAME = 'allo-u-v1.2.1';
 const urlsToCache = [
     './',
     './index.html',
