@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_NAME = 'allo-cache-v2';
+const CACHE_NAME = 'allo-cache-v3';
 const PRECACHE_URLS = [
   './',
   './index.html',
