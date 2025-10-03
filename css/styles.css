@@ -1,145 +1,636 @@
-/* Dropdown Menu */
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 10px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    border-radius: 12px;
-    padding: 8px;
-    min-width: 200px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-    z-index: 1000;
+/* =========================================================
+   AllO_U Stylesheet v1.2.0
+   Домашний коммуникатор | Glass Morphism UI
+   ========================================================= */
+
+/* -----------------------------
+   0. Переменные и базовый reset
+   ----------------------------- */
+:root {
+    /* Цвета */
+    --app-bg: linear-gradient(135deg,
+        #667eea 0%, #764ba2 15%, #f093fb 30%, #f5576c 45%,
+        #4facfe 60%, #00f2fe 75%, #4facfe 90%, #667eea 100%);
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-hover: rgba(255, 255, 255, 0.12);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.75);
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --accent-color: #8b5cf6;
+    --accent-color-strong: #7c3aed;
+    --warning-color: #f97316;
+    --danger-color: #f05454;
+    --success-color: #10b981;
+    --shadow-color: rgba(0, 0, 0, 0.35);
+    --card-overlay: rgba(255, 255, 255, 0.05);
+    --divider-color: rgba(255, 255, 255, 0.12);
+
+    /* Типографика и отступы */
+    --font-main: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --transition: all 0.25s ease;
+    --border-radius-lg: 24px;
+    --border-radius-md: 16px;
+    --border-radius-sm: 10px;
+    --spacing-xs: 6px;
+    --spacing-sm: 12px;
+    --spacing-md: 20px;
+    --spacing-lg: 28px;
+    --spacing-xl: 36px;
+
+    /* Прочее */
+    --header-height: 72px;
+    --nav-height: 76px;
+    --max-content-width: 1040px;
 }
 
-.dropdown-menu.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-.dropdown-item {
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: var(--font-main);
+    background: var(--app-bg);
+    background-size: 400% 400%;
+    animation: gradientShift 18s ease infinite;
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-md);
+}
+
+/* -----------------------------
+   1. Контейнер приложения
+   ----------------------------- */
+#app {
+    width: 100%;
+    max-width: var(--max-content-width);
+    height: calc(100vh - var(--spacing-md) * 2);
+    min-height: 620px;
+    background: rgba(10, 12, 24, 0.55);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(25px);
+    display: grid;
+    grid-template-rows: var(--header-height) 1fr var(--nav-height);
+    box-shadow: 0 28px 60px var(--shadow-color);
+    position: relative;
+    overflow: hidden;
+}
+
+/* -----------------------------
+   2. Заголовок
+   ----------------------------- */
+.app-header {
+    border-bottom: 1px solid var(--divider-color);
     display: flex;
     align-items: center;
-    gap: 12px;
+    padding: 0 var(--spacing-lg);
+    position: relative;
+    z-index: 2;
+}
+
+.header-content {
     width: 100%;
-    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.app-logo-btn {
     background: none;
     border: none;
     color: var(--text-primary);
-    font-size: 14px;
-    text-align: left;
-    border-radius: 8px;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+}
+
+.app-logo-btn:hover {
+    background: var(--glass-hover);
+}
+
+.app-logo {
+    font-size: 24px;
+}
+
+.menu-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    font-size: 22px;
     cursor: pointer;
     transition: var(--transition);
+    display: grid;
+    place-items: center;
 }
 
-.dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+.menu-btn:hover,
+.menu-btn.active {
+    background: var(--glass-hover);
 }
 
-/* Profile Modal Styles */
-.profile-form {
-    padding: 20px;
-}
-
-.avatar-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.avatar-preview {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: var(--glass-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    overflow: hidden;
-    border: 3px solid var(--accent-color);
-}
-
-.avatar-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 12px;
-    background: var(--glass-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-size: 16px;
-    transition: var(--transition);
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.visibility-section {
-    margin: 30px 0;
-    padding: 20px;
-    background: var(--glass-bg);
-    border-radius: 12px;
-}
-
-.visibility-section h3 {
-    margin-bottom: 15px;
-    color: var(--text-primary);
-}
-
-.checkbox-label {
+/* Индикаторы соединения */
+.connection-indicators {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 12px;
+}
+
+.indicator {
+    min-width: 44px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    transition: var(--transition);
+    cursor: default;
+}
+
+.indicator.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color-strong);
+    box-shadow: 0 0 22px rgba(123, 89, 246, 0.55);
+}
+
+.indicator.warning {
+    background: rgba(249, 115, 22, 0.25);
+    border-color: rgba(249, 115, 22, 0.5);
+}
+
+.indicator.offline {
+    background: rgba(255, 255, 255, 0.05);
+    opacity: 0.5;
+}
+
+/* -----------------------------
+   3. Основной контент
+   ----------------------------- */
+.app-content {
+    position: relative;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    scroll-behavior: smooth;
+}
+
+.app-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.app-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.app-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+}
+
+/* -----------------------------
+   4. Навигация
+   ----------------------------- */
+.app-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--divider-color);
+    background: rgba(15, 18, 34, 0.55);
+    backdrop-filter: blur(18px);
+}
+
+.nav-btn {
+    position: relative;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
     cursor: pointer;
+    transition: var(--transition);
+    padding-top: 12px;
+}
+
+.nav-btn .nav-icon {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+
+.nav-btn.active,
+.nav-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+    height: 3px;
+    border-radius: 999px 999px 0 0;
+    background: var(--accent-color);
+}
+
+/* -----------------------------
+   5. Глобальные компоненты
+   ----------------------------- */
+.section-header {
+    margin-bottom: var(--spacing-md);
+}
+
+.section-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.section-subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.grid {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.grid.scenes {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.grid.participants {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.grid.events {
+    grid-template-columns: 1fr;
+}
+
+/* Карточки */
+.card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 14px 32px rgba(5, 8, 20, 0.35);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(5, 8, 20, 0.45);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Кнопки */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #7b5df0, #9f7aea);
+    color: #fdfcff;
+    box-shadow: 0 12px 24px rgba(123, 93, 240, 0.35);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #6b4de6, #8c6cf1);
+    box-shadow: 0 16px 28px rgba(123, 93, 240, 0.45);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: var(--text-primary);
 }
 
-.checkbox-label input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.18);
 }
 
-/* Locator View Styles */
+.btn-danger {
+    background: rgba(240, 84, 84, 0.35);
+    border: 1px solid rgba(240, 84, 84, 0.6);
+    color: #ffdddd;
+}
+
+.btn-danger:hover {
+    background: rgba(240, 84, 84, 0.45);
+}
+
+/* -----------------------------
+   6. Сцены (ScenesView)
+   ----------------------------- */
+.scene-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.scene-card::after {
+    content: attr(data-type);
+    position: absolute;
+    top: -40px;
+    right: -50px;
+    width: 120px;
+    height: 120px;
+    transform: rotate(45deg);
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 20%;
+    font-size: 32px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.08);
+    display: grid;
+    place-items: center;
+}
+
+.scene-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.scene-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.scene-icon {
+    font-size: 34px;
+}
+
+.scene-name {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.scene-meta {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.scene-participants {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.scene-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-sm);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.055em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.scene-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.favorite-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fbffd7;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.favorite-btn.active {
+    background: rgba(255, 230, 0, 0.35);
+    color: #fff8a5;
+}
+
+.scene-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--divider-color);
+    padding-top: var(--spacing-sm);
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+/* -----------------------------
+   7. Участники (TeamView)
+   ----------------------------- */
+.participant-card {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.participant-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.12);
+    display: grid;
+    place-items: center;
+    font-size: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.participant-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.participant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.participant-callsign {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.participant-role {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.participant-connections {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.connection-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.participant-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.favorite-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+    transition: var(--transition);
+    color: #f8f3a7;
+}
+
+.favorite-toggle.active {
+    background: rgba(255, 230, 0, 0.3);
+}
+
+/* -----------------------------
+   8. События (EventsView)
+   ----------------------------- */
+.event-card {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-left: 5px solid var(--accent-color);
+}
+
+.event-card[data-type="I"] { border-left-color: #22d3ee; }
+.event-card[data-type="W"] { border-left-color: var(--warning-color); }
+.event-card[data-type="A"] { border-left-color: var(--danger-color); }
+.event-card[data-type="C"] { border-left-color: #6366f1; }
+.event-card[data-type="S"] { border-left-color: #22c55e; }
+.event-card[data-type="R"] { border-left-color: #f97316; }
+
+.event-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.event-content h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.event-meta {
+    display: flex;
+    gap: var(--spacing-sm);
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.event-details {
+    margin-top: 12px;
+    line-height: 1.55;
+    color: var(--text-primary);
+}
+
+/* -----------------------------
+   9. Локатор (LocatorView)
+   ----------------------------- */
 .locator-container {
-    padding: 20px;
+    display: grid;
+    gap: var(--spacing-md);
 }
 
 .scan-status {
     text-align: center;
     padding: 30px;
     background: var(--glass-bg);
-    border-radius: 16px;
-    margin-bottom: 20px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--glass-border);
 }
 
 .scan-status h2 {
@@ -149,7 +640,7 @@
 .scan-animation {
     width: 100px;
     height: 100px;
-    margin: 20px auto;
+    margin: 22px auto;
     border: 3px solid var(--accent-color);
     border-radius: 50%;
     position: relative;
@@ -162,108 +653,62 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
-    background: var(--accent-color);
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 30px rgba(139, 92, 246, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
-    }
+    background: var(--accent-color);
 }
 
 .found-participants {
-    margin-top: 20px;
+    display: grid;
+    gap: var(--spacing-sm);
 }
 
 .network-participant {
     background: var(--glass-bg);
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 12px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--glass-border);
+    padding: var(--spacing-sm);
     transition: var(--transition);
-}
-
-.network-participant.new {
-    border: 1px solid var(--accent-color);
 }
 
 .network-participant:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
 }
 
-.participant-header {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 12px;
+.network-participant.new {
+    border-color: var(--accent-color);
 }
 
-.participant-icon {
-    font-size: 32px;
-}
-
-.participant-info {
-    flex: 1;
-}
-
-.participant-callsign {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-}
-
-.signal-strength,
-.participant-distance {
+.participant-distance,
+.signal-strength {
     font-size: 12px;
-    color: var(--text-secondary);
+    color: var(--text-muted);
+    display: block;
+    margin-top: 4px;
+    letter-spacing: 0.03em;
 }
 
-.add-btn,
-.call-btn {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-}
-
-.no-results {
-    text-align: center;
-    padding: 40px;
-    color: var(--text-secondary);
-}
-
-/* Update navigation for 4 buttons */
-.app-nav {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Changed from 3 to 4 */
-}
-
-/* === VERSION 1.2.0 STYLES === */
-
-/* Dropdown Menu */
+/* -----------------------------
+   10. Выпадающее меню
+   ----------------------------- */
 .dropdown-menu {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 12px);
     right: 10px;
-    background: var(--glass-bg);
+    background: rgba(15, 18, 34, 0.95);
+    border-radius: var(--border-radius-sm);
+    padding: 10px;
+    min-width: 220px;
+    border: 1px solid var(--glass-border);
     backdrop-filter: blur(20px);
-    border-radius: 12px;
-    padding: 8px;
-    min-width: 200px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
-    transition: all 0.3s ease;
-    z-index: 1000;
+    transition: var(--transition);
+    z-index: 10;
 }
 
 .dropdown-menu.show {
@@ -273,49 +718,107 @@
 }
 
 .dropdown-item {
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 12px 16px;
+    gap: var(--spacing-sm);
+    padding: 12px 14px;
     background: none;
     border: none;
     color: var(--text-primary);
     font-size: 14px;
-    text-align: left;
-    border-radius: 8px;
+    border-radius: var(--border-radius-sm);
     cursor: pointer;
     transition: var(--transition);
 }
 
-.dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+.dropdown-item span:first-child {
+    font-size: 18px;
 }
 
-/* Profile Modal Styles */
+.dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* -----------------------------
+   11. Модальные окна
+   ----------------------------- */
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(6, 8, 18, 0.72);
+    backdrop-filter: blur(18px);
+    z-index: 20;
+    padding: var(--spacing-md);
+    overflow-y: auto;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    width: min(540px, 100%);
+    background: rgba(15, 18, 34, 0.95);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    animation: modalPop 0.25s ease;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--divider-color);
+}
+
+.modal-body {
+    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.close-btn {
+    border: none;
+    background: none;
+    font-size: 28px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.close-btn:hover {
+    color: var(--text-primary);
+}
+
+/* Профиль */
 .profile-form {
-    padding: 20px;
+    display: grid;
+    gap: var(--spacing-md);
 }
 
 .avatar-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 30px;
+    display: grid;
+    justify-items: center;
+    gap: var(--spacing-sm);
 }
 
 .avatar-preview {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
+    width: 130px;
+    height: 130px;
+    border-radius: 32px;
     background: var(--glass-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
+    border: 2px solid var(--accent-color);
+    display: grid;
+    place-items: center;
+    font-size: 50px;
     overflow: hidden;
-    border: 3px solid var(--accent-color);
 }
 
 .avatar-preview img {
@@ -324,23 +827,18 @@
     object-fit: cover;
 }
 
-.form-group {
-    margin-bottom: 20px;
-}
-
 .form-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: var(--text-secondary);
-    font-size: 14px;
 }
 
 .form-group input {
     width: 100%;
-    padding: 12px;
-    background: var(--glass-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    padding: 14px;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text-primary);
     font-size: 16px;
     transition: var(--transition);
@@ -349,83 +847,104 @@
 .form-group input:focus {
     outline: none;
     border-color: var(--accent-color);
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.12);
 }
 
 .visibility-section {
-    margin: 30px 0;
-    padding: 20px;
-    background: var(--glass-bg);
-    border-radius: 12px;
-}
-
-.visibility-section h3 {
-    margin-bottom: 15px;
-    color: var(--text-primary);
+    padding: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-    cursor: pointer;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
     color: var(--text-primary);
-}
-
-.checkbox-label input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
     cursor: pointer;
 }
 
-/* Locator View Styles */
-.locator-container {
-    padding: 20px;
+.checkbox-label input {
+    width: 18px;
+    height: 18px;
 }
 
-.scan-status {
-    text-align: center;
-    padding: 30px;
-    background: var(--glass-bg);
-    border-radius: 16px;
-    margin-bottom: 20px;
-}
-
-.scan-animation {
-    width: 100px;
-    height: 100px;
-    margin: 20px auto;
-    border: 3px solid var(--accent-color);
-    border-radius: 50%;
-    position: relative;
-    animation: pulse 2s infinite;
+/* -----------------------------
+   12. Утилиты и эффекты
+   ----------------------------- */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
+    100% { background-position: 0% 50%; }
 }
 
 @keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+    0% { box-shadow: 0 0 0 0 rgba(123, 89, 246, 0.65); }
+    70% { box-shadow: 0 0 0 30px rgba(123, 89, 246, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(123, 89, 246, 0); }
+}
+
+@keyframes modalPop {
+    from { transform: translateY(20px) scale(0.98); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.text-muted { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+/* -----------------------------
+   13. Адаптивность
+   ----------------------------- */
+@media (max-width: 1024px) {
+    #app {
+        height: auto;
+        min-height: 100vh;
     }
-    70% {
-        box-shadow: 0 0 0 30px rgba(139, 92, 246, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+    .grid.scenes,
+    .grid.participants {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
 }
 
-.network-participant {
-    background: var(--glass-bg);
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 12px;
+@media (max-width: 768px) {
+    body {
+        padding: var(--spacing-sm);
+    }
+    #app {
+        border-radius: var(--border-radius-md);
+        grid-template-rows: 64px 1fr 72px;
+    }
+    .app-header {
+        padding: 0 var(--spacing-md);
+    }
+    .app-content {
+        padding: var(--spacing-md);
+    }
+    .grid.scenes,
+    .grid.participants {
+        grid-template-columns: 1fr;
+    }
 }
 
-.network-participant.new {
-    border: 1px solid var(--accent-color);
-}
-
-/* Update navigation for 4 buttons */
-.app-nav {
-    grid-template-columns: repeat(4, 1fr) !important;
+@media (max-width: 540px) {
+    .connection-indicators {
+        display: none;
+    }
+    .app-logo-btn {
+        font-size: 20px;
+    }
+    .section-title {
+        font-size: 22px;
+    }
+    .modal-content {
+        margin: auto;
+        border-radius: var(--border-radius-sm);
+    }
 }
