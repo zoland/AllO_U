@@ -1,0 +1,52 @@
+{
+  "sceneId": "family_lounge",
+  "sceneName": "Сцена «Гостиная»",
+  "anchor": {
+    "type": "self",
+    "label": "Я дома"
+  },
+  "participants": [
+    {
+      "id": "katya",
+      "callsign": "Katya",
+      "type": "human",
+      "role": "Своя",
+      "distance": 48,
+      "bearing": 90,
+      "bearingLabel": "→",
+      "heartbeat": 12,
+      "status": "online",
+      "avatar": "👩",
+      "favorite": false,
+      "lastUpdate": "2025-09-05T09:12:36Z"
+    },
+    {
+      "id": "rover",
+      "callsign": "Rover",
+      "type": "droid",
+      "role": "Дроид HELLO",
+      "distance": 19,
+      "bearing": 140,
+      "bearingLabel": "↘",
+      "heartbeat": 30,
+      "status": "online",
+      "avatar": "🤖",
+      "favorite": false,
+      "lastUpdate": "2025-09-05T09:12:18Z"
+    },
+    {
+      "id": "lena",
+      "callsign": "Lena",
+      "type": "human",
+      "role": "Своя",
+      "distance": 72,
+      "bearing": 315,
+      "bearingLabel": "↖",
+      "heartbeat": 120,
+      "status": "stale",
+      "avatar": "👩",
+      "favorite": true,
+      "lastUpdate": "2025-09-05T09:10:10Z"
+    }
+  ]
+}

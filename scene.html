@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>AllO · сцена</title>
+<link rel="stylesheet" href="./css/scene.css">
+</head>
+<body>
+<main class="scene-app">
+  <header class="scene-header">
+    <button id="menuButton">☰</button>
+    <h1 id="sceneTitle">Сцена</h1>
+    <div class="anchor">
+      <span id="anchorLabel">Относительно меня</span>
+      <button id="toggleAnchor">📍 Переключить</button>
+    </div>
+  </header>
+
+  <section class="scene-summary">
+    <span id="summaryParticipants"></span>
+    <span id="summaryRange"></span>
+  </section>
+
+  <section class="scene-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Напр.</th>
+          <th>Участник</th>
+          <th>Дистанция</th>
+          <th>Δ</th>
+        </tr>
+      </thead>
+      <tbody id="participantsTable"></tbody>
+    </table>
+  </section>
+</main>
+
+<!-- Меню -->
+<nav id="sceneMenu" hidden>
+  <button data-action="reset">🔄 Восстановить тестовую базу</button>
+  <button data-action="toggle-favs">⭐ Показать только избранных</button>
+  <button data-action="close">❌ Закрыть</button>
+</nav>
+
+<script type="module" src="./js/scene-renderer.js"></script>
+</body>
+</html>
